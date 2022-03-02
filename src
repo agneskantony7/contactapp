@@ -1,0 +1,95 @@
+src/public/controllers/ContactAddController.js
+(function (app) {
+    "use strict";
+
+    app.controller("ContactAddController", ContactAddController);
+
+    ContactAddController.$inject = ["$location", "RepositoryService"];
+    ContactAddController.$inject = ["$location", "toaster", "RepositoryService"];
+
+    function ContactAddController($location, repository) {
+    function ContactAddController($location, toaster, repository) {
+        var vm = this;
+
+        vm.model = {};
+
+        vm.save = function () {
+            toaster.pop("wait", "Saving...");
+
+            repository.createContact(vm.model).then(function (result) {
+                toaster.pop("success", "The contact was saved successfully");
+
+                $location.path("/");
+            });
+        };
+        vm.cancel = function () {
+            $location.path("/");
+        };
+    };
+})(angular.module("contactManager"));
+   src/public/controllers/ContactEditController.js 
+
+    app.controller("ContactEditController", ContactEditController);
+
+    ContactEditController.$inject = ["$routeParams", "$location", "RepositoryService"];
+    ContactEditController.$inject = ["$routeParams", "$location", "toaster", "RepositoryService"];
+
+    function ContactEditController($routeParams, $location, repository) {
+    function ContactEditController($routeParams, $location, toaster, repository) {
+        var vm = this;
+
+        var id = $routeParams.id;
+        vm.model = {};
+        repository.getContact(id).then(function (result) {
+            vm.model = result.data;
+        });
+
+        vm.save = function () {
+            toaster.pop("wait", "Saving...");
+
+            repository.updateContact(id, vm.model).then(function (result) {
+                toaster.pop("success", "The changes were saved successfully");
+
+                $location.path("/contact/details/" + id);
+            });
+        };
+        vm.cancel = function () {
+            $location.path("/contact/details/" + id);
+        };
+    };
+})(angular.module("contactManager"));
+
+src/public/controllers/ContactRemoveController.js
+(function (app) {
+    "use strict";
+
+    app.controller("ContactRemoveController", ContactRemoveController);
+
+    ContactRemoveController.$inject = ["$location", "$routeParams", "RepositoryService"];
+    ContactRemoveController.$inject = ["$location", "$routeParams", "toaster", "RepositoryService"];
+
+    function ContactRemoveController($location, $routeParams, repository) {
+    function ContactRemoveController($location, $routeParams, toaster, repository) {
+        var vm = this;
+
+        var id = $routeParams.id;
+        vm.model = {};
+        repository.getContact(id).then(function (result) {
+            vm.model = result.data;
+        });
+
+        vm.remove = function () {
+            toaster.pop("wait", "Removing...");
+
+            repository.deleteContact(id).then(function (result) {
+                toaster.pop("success", "The contact was removed successfully");
+
+                $location.path("/");
+            });
+        };
+        
+        vm.cancel = function () {
+            $location.path("/");
+        };
+    };
+})(angular.module("contactManager"));
